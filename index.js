@@ -1,7 +1,8 @@
-const express = require('express');
-const helmet = require('helmet');
-
+const express = require("express");
+const helmet = require("helmet");
+const knexConfig = require("./knexfile");
 const server = express();
+const knex = require("knex");
 const db = knex(knexConfig.development);
 
 server.use(express.json());
@@ -9,70 +10,58 @@ server.use(helmet());
 
 // endpoints here
 
-
 //POST
-connect.post('/api/zoos', (req, res) => {
+server.post("/api/zoos", (req, res) => {
   const name = req.body;
-  db('zoos')
+  db("zoos")
     .insert(name)
     .then(ids => {
-      db('zoos')
-        .where({ id: })
-        .then(zoo => {
-          res.status(201).json(zoo);
-        })
-        .catch(err => res.status(500).json(err));
-      
-      // GET
+      res.status(201).json(zoo);
+    })
+    .catch(err => res.status(500).json(err));
+});
+// GET
 
-connect.get('/api/zoos', (req, res) => {
-  db("lambda")
+server.get("/api/zoos", (req, res) => {
+  db("zoos")
     .then(records => res.status(200).json(records))
     .catch(err => res.status(500).json(err));
 });
 
-      
-      // GET #2
-connect.get('/api/zoos/:id', (req, res) => {
+// GET #2
+server.get("/api/zoos/:id", (req, res) => {
   const { id } = req.params;
-  db("lambda")
+  db("zoos")
     .where({ id: id })
     .first()
     .then(results => res.status(200).json(results))
     .catch(err => res.status(500).json(err));
 });
 
+// DELETE
 
-   // DELETE    
- 
-      connect.delete('/api/zoos/:id', (req, res) => {
-        const { id } = req.params;
+server.delete("/api/zoos/:id", (req, res) => {
+  const { id } = req.params;
 
-        db("lambda")
-          .where({ id })
-          .del()
-          .then(count => res.status(200).json(count))
-          .catch(err => res.status(500).json(err));
-      });
-  
-  
-  //PUT
+  db("zoos")
+    .where({ id })
+    .del()
+    .then(count => res.status(200).json(count))
+    .catch(err => res.status(500).json(err));
+});
 
-connect.put('/api/zoos/:id', (req, res) => {
+//PUT
+
+server.put("/api/zoos/:id", (req, res) => {
   const { id } = req.params;
   const zoos = req.body;
-  
-  db("lambda")
+
+  db("zoos")
     .where({ id })
     .update(zoos)
     .then(count => res.status(200).json(count))
     .catch(err => res.status(500).json(err));
 });
-
-;
-
-module.exports = connect;
-
 
 const port = 3300;
 server.listen(port, function() {
