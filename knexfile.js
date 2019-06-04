@@ -1,13 +1,10 @@
-// Update with your config settings.
+//Configure knex to connect to /data/lambda.sqlite3 using the sqlite3 module.
 
 module.exports = {
   development: {
     client: "sqlite3",
-    useNullAsDefault: true,
     connection: {
-      filename: "./data/lamnda.sqlite3"
+      filename: "./data/lambda.sqlite3"
     }
-  },
-
-
+  }
 };

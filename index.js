@@ -1,69 +1,42 @@
-const express = require("express");
-const helmet = require("helmet");
-const knexConfig = require("./knexfile");
-const server = express();
-const knex = require("knex");
-const db = knex(knexConfig.development);
+const server = require("./api/server");
 
-server.use(express.json());
-server.use(helmet());
+const port = process.env.PORT || 3300;
+server.listen(port, () => console.log(`\n** Running on port ${port} **\n`));
 
-// endpoints here
+//END-POINTS
 
-//POST
-server.post("/api/zoos", (req, res) => {
+
+//POST 
+server.post("/", (req, res) => {
   const name = req.body;
+
   db("zoos")
     .insert(name)
-    .then(ids => {
-      res.status(201).json(zoo);
+    .then(input => {
+      res.status(200).json(input);
     })
-    .catch(err => res.status(500).json(err));
+    .catch(err => {
+      res.status(500).json(err);
+    });
 });
-// GET
 
-server.get("/api/zoos", (req, res) => {
+//GET
+
+server.get("/", (req, res) => {
   db("zoos")
-    .then(records => res.status(200).json(records))
+    .then(zoos => res.status(200).json(zoos))
     .catch(err => res.status(500).json(err));
 });
 
-// GET #2
-server.get("/api/zoos/:id", (req, res) => {
-  const { id } = req.params;
-  db("zoos")
-    .where({ id: id })
-    .first()
-    .then(results => res.status(200).json(results))
-    .catch(err => res.status(500).json(err));
+
+// GET (ID)
+server.get("/:id", (req, res) => {
+    db("zoos")
+        .then(zoos => res.status(200).json(zoos))
+        .catch(err => res.status(500).json(err));
 });
 
-// DELETE
 
-server.delete("/api/zoos/:id", (req, res) => {
-  const { id } = req.params;
-
-  db("zoos")
-    .where({ id })
-    .del()
-    .then(count => res.status(200).json(count))
-    .catch(err => res.status(500).json(err));
-});
+//DELETE
 
 //PUT
-
-server.put("/api/zoos/:id", (req, res) => {
-  const { id } = req.params;
-  const zoos = req.body;
-
-  db("zoos")
-    .where({ id })
-    .update(zoos)
-    .then(count => res.status(200).json(count))
-    .catch(err => res.status(500).json(err));
-});
-
-const port = 3300;
-server.listen(port, function() {
-  console.log(`\n=== Web API Listening on http://localhost:${port} ===\n`);
-});
